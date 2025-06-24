@@ -6,21 +6,24 @@ import (
 	"os"
 
 	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres" // ← or mysql, sqlite3, etc, matching your DB_URL
+	_ "github.com/golang-migrate/migrate/v4/source/file"       // ← register the “file://” source driver
 	"github.com/joho/godotenv"
 )
 
 func main() {
 	godotenv.Load()
 	port := os.Getenv("PORT")
+	dbUrl := os.Getenv("DB_URL")
 
 	if port == "" {
 		log.Fatal("Port not found in the env fil")
 	}
-	fmt.Print("Port:", port)
+	fmt.Println("Listening on port:", port)
 
 	m, err := migrate.New(
-		"file://path/to/migrations",
-		"postgres://user:pass@localhost:5432/dbname?sslmode=disable",
+		"file://db/migrations",
+		dbUrl,
 	)
 
 	if err != nil {

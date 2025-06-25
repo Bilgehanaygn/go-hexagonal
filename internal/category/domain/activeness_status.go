@@ -1,8 +1,8 @@
 package domain
 
-type ActivenessStatus string 
+type ActivenessStatus string
 
 const (
-	ACTIVE ActivenessStatus = "Active"
+	ACTIVE  ActivenessStatus = "Active"
 	PASSIVE ActivenessStatus = "Passive"
 )

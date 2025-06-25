@@ -15,7 +15,7 @@ type api struct {
 	addr string
 }
 
-func (s *api) ServeHTTP(w http.ResponseWriter, r *http.Request){
+func (s *api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello from api"))
 }
 
@@ -38,12 +38,12 @@ func main() {
 		log.Fatalf("migration failed: %v", err)
 	}
 
-	api := &api{addr: ":"+port}
+	api := &api{addr: ":" + port}
 	mux := http.NewServeMux()
 
 	server := &http.Server{Addr: api.addr, Handler: mux}
 
-	mux.HandleFunc("GET /kategori", )
+	mux.HandleFunc("GET /kategori")
 	mux.HandleFunc("POST /kategori", api.createUsersHandler)
 
 	err = server.ListenAndServe()

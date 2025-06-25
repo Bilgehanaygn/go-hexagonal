@@ -7,9 +7,9 @@ import (
 )
 
 type CategoryDbEntity struct {
-    entity.BaseEntity
-    Name             string                
-    Kind             domain.CategoryKind   
-    Status           domain.ActivenessStatus
-    ParentCategoryId uuid.UUID
+	entity.BaseEntity
+	Name             string
+	Kind             domain.CategoryKind
+	Status           domain.ActivenessStatus
+	ParentCategoryId uuid.UUID
 }

@@ -1,9 +1,14 @@
 package application
 
-import "github.com/bilgehanaygn/urun/internal/category/domain"
+import (
+	"context"
+
+	"github.com/bilgehanaygn/urun/internal/category/domain"
+	"github.com/google/uuid"
+)
 
 type CategoryRepository interface {
-	Find(id string) (*domain.Category, error)
-	Save(s *domain.Category) error
-	Update(s *domain.Category) error
+	FindById(ctx context.Context, id uuid.UUID) (*domain.Category, error)
+	Create(ctx context.Context, s *domain.Category) (*domain.Category, error)
+	Update(ctx context.Context, s *domain.Category) (*domain.Category, error)
 }

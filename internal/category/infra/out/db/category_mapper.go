@@ -1,14 +1,13 @@
-package mapper
+package db
 
 import (
 	"github.com/bilgehanaygn/urun/internal/category/domain"
-	"github.com/bilgehanaygn/urun/internal/category/infra/out/db/entity"
-	"github.com/bilgehanaygn/urun/internal/common/infra/out/db"
+	commonEntity "github.com/bilgehanaygn/urun/internal/common/infra/out/db/entity"
 )
 
-func toDbCategory(category *domain.Category) *entity.CategoryDbEntity {
-	dbCategory := &entity.CategoryDbEntity{
-		BaseEntity: db.BaseEntity{
+func toDbEntity(category *domain.Category) *CategoryDbEntity {
+	dbCategory := &CategoryDbEntity{
+		BaseEntity: commonEntity.BaseEntity{
             ID: category.Id,      
         },
         Name:   category.Name,
@@ -19,9 +18,10 @@ func toDbCategory(category *domain.Category) *entity.CategoryDbEntity {
 	return dbCategory
 }
 
-func fromDbCategory(dbCategory *entity.CategoryDbEntity) *domain.Category {
+func toDomainEntity(dbCategory *CategoryDbEntity) *domain.Category {
+	
 	category := domain.Category{
-		Id: dbCategory.ID,
+		Id: dbCategory.BaseEntity.ID,
 		Name: dbCategory.Name,
 		Kind: dbCategory.Kind,
 		ParentCategoryId: dbCategory.ParentCategoryId,

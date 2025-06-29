@@ -2,12 +2,12 @@ package db
 
 import (
 	"github.com/bilgehanaygn/urun/internal/category/domain"
-	commonEntity "github.com/bilgehanaygn/urun/internal/common/infra/out/db/entity"
+	"github.com/bilgehanaygn/urun/internal/common/db"
 )
 
 func toDbEntity(category *domain.Category) *CategoryDbEntity {
 	dbCategory := &CategoryDbEntity{
-		BaseEntity: commonEntity.BaseEntity{
+		BaseEntity: db.BaseEntity{
 			ID: category.Id,
 		},
 		Name:   category.Name,

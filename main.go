@@ -1,14 +1,16 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 
-	"github.com/golang-migrate/migrate/v4"
+	"github.com/bilgehanaygn/urun/internal/category/application"
+	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/controller"
+	"github.com/bilgehanaygn/urun/internal/category/infra/out/db"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
 
 type api struct {
@@ -22,31 +24,36 @@ func (s *api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func main() {
 	godotenv.Load()
 	port := os.Getenv("PORT")
-	dbUrl := os.Getenv("DB_URL")
+	// dbUrl := os.Getenv("DB_URL")
 
-	m, err := migrate.New(
-		"file://db/migrations",
-		dbUrl,
-	)
+	// m, err := migrate.New(
+	// 	"file://db/migrations",
+	// 	dbUrl,
+	// )
 
-	if err != nil {
-		log.Fatalf("failed to initialize migrations: %v", err)
-	}
+	// if err != nil {
+		// log.Fatalf("failed to initialize migrations: %v", err)
+	// }
 
 	// this is what actually *runs* the migrations
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatalf("migration failed: %v", err)
-	}
+	// defer m.Close()
+	// if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	// 	log.Fatalf("migration failed: %v", err)
+	// }
 
 	api := &api{addr: ":" + port}
 	mux := http.NewServeMux()
 
 	server := &http.Server{Addr: api.addr, Handler: mux}
 
-	mux.HandleFunc("GET /kategori")
-	mux.HandleFunc("POST /kategori", api.createUsersHandler)
+	gormDb := gorm.DB{}
+	categoryRepository := db.NewGormCategoryRepository(&gormDb)
+	categoryService := application.CategoryCommandService{CategoryRepository:categoryRepository}
+	categoryCommandController := controller.CategoryCommandController{CategoryCommandService: categoryService}
 
-	err = server.ListenAndServe()
+	mux.HandleFunc("POST /kategori",  categoryCommandController.HandleCreate)
+
+	err := server.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}

@@ -7,8 +7,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/bilgehanaygn/urun/internal/category/application"
-	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/request"
-	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/response"
+	"github.com/bilgehanaygn/urun/internal/category/infra/http/request"
+	"github.com/bilgehanaygn/urun/internal/category/infra/http/response"
 	"github.com/bilgehanaygn/urun/internal/common/utils"
 )
 

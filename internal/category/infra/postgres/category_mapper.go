@@ -1,13 +1,13 @@
-package db
+package postgres
 
 import (
 	"github.com/bilgehanaygn/urun/internal/category/domain"
-	"github.com/bilgehanaygn/urun/internal/common/db"
+	"github.com/bilgehanaygn/urun/internal/common/postgres"
 )
 
 func toDbEntity(category *domain.Category) *CategoryDbEntity {
 	dbCategory := &CategoryDbEntity{
-		BaseEntity: db.BaseEntity{
+		BaseEntity: postgres.BaseEntity{
 			ID: category.Id,
 		},
 		Name:   category.Name,

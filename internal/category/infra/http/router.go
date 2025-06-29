@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/controller"
+	"github.com/bilgehanaygn/urun/internal/category/infra/http/controller"
 	"github.com/go-chi/chi/v5"
 )
 

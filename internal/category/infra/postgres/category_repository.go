@@ -1,6 +1,5 @@
-package db
+package postgres
 
-/*
 import (
 	"context"
 
@@ -57,4 +56,19 @@ func (repo *GormCategoryRepository) FindById(ctx context.Context, id uuid.UUID) 
 
 	return toDomainEntity(&dbCategory), nil
 }
-*/
+
+func (repo *GormCategoryRepository) List(ctx context.Context) ([]*domain.Category, error) {
+	var dbCategories []CategoryDbEntity
+	if err := repo.db.WithContext(ctx).
+		Find(&dbCategories).
+		Error; err != nil {
+		return nil, err
+	}
+	
+	categories := make([]*domain.Category, len(dbCategories))
+	for i, dbCat := range dbCategories {
+		categories[i] = toDomainEntity(&dbCat)
+	}
+
+	return categories, nil
+}

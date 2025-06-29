@@ -8,6 +8,7 @@ import (
 	"github.com/bilgehanaygn/urun/internal/category/application"
 	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/controller"
 	"github.com/bilgehanaygn/urun/internal/category/infra/out/db"
+	"github.com/go-chi/chi"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
@@ -42,19 +43,19 @@ func main() {
 	// }
 
 	api := &api{addr: ":" + port}
-	mux := http.NewServeMux()
+	r := chi.NewRouter()
 
-	server := &http.Server{Addr: api.addr, Handler: mux}
+	server := &http.Server{Addr: api.addr, Handler: r}
 
 	// gormDb := gorm.DB{}
 	categoryRepository := db.NewMockCategoryRepository(nil)
 	categoryService := application.CategoryService{CategoryRepository:categoryRepository}
 	categoryController := controller.CategoryController{CategoryService: categoryService}
 
-	mux.HandleFunc("POST /category",  categoryController.HandleCreate)
-	mux.HandleFunc("PUT /category", categoryController.HandleUpdate)
-	mux.HandleFunc("GET /category", categoryController.HandleList)
-	mux.HandleFunc("GET /category/{id}", categoryController.HandleGetById)
+	r.Post("/category",  categoryController.HandleCreate)
+	r.Put("/category",   categoryController.HandleUpdate)
+	r.Get("/category",   categoryController.HandleList)
+	r.Get("/category/{id}", categoryController.HandleGetById)
 
 	log.Printf("Listening on %v", port)
 

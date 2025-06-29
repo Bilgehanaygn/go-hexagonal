@@ -2,45 +2,35 @@ package controller
 
 import (
 	"net/http"
-	"strings"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 
 	"github.com/bilgehanaygn/urun/internal/category/application"
 	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/request"
 	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/response"
 	"github.com/bilgehanaygn/urun/internal/common/utils"
-	"github.com/google/uuid"
 )
 
 type CategoryController struct {
 	CategoryService application.CategoryService
 }
 
-
 func (h *CategoryController) HandleCreate(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method != http.MethodPost {
-		utils.EncodeJSON(w, http.StatusMethodNotAllowed, utils.DefaultErrorResult())
-		return
-	}
-
 	var req request.CategoryCreateRequest
-	if err := utils.DecodeJSON(r, &req); err != nil { 
+	if err := utils.DecodeJSON(r, &req); err != nil {
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
 		return
 	}
 
 	category, err := req.ToDomainEntity()
-
 	if err != nil {
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
 		return
-	} 
+	}
 
-
-	ctx := r.Context() 
-	err = h.CategoryService.HandleCreate(ctx, *category)
-
-	if err != nil {
+	ctx := r.Context()
+	if err := h.CategoryService.HandleCreate(ctx, *category); err != nil {
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
 		return
 	}
@@ -49,30 +39,20 @@ func (h *CategoryController) HandleCreate(w http.ResponseWriter, r *http.Request
 }
 
 func (h *CategoryController) HandleUpdate(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method != http.MethodPost {
-		utils.EncodeJSON(w, http.StatusMethodNotAllowed, utils.DefaultErrorResult())
-		return
-	}
-
 	var req request.CategoryCreateRequest
-	if err := utils.DecodeJSON(r, &req); err != nil { 
+	if err := utils.DecodeJSON(r, &req); err != nil {
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
 		return
 	}
 
 	category, err := req.ToDomainEntity()
-
 	if err != nil {
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
 		return
-	} 
+	}
 
-
-	ctx := r.Context() 
-	err = h.CategoryService.HandleUpdate(ctx, *category)
-
-	if err != nil {
+	ctx := r.Context()
+	if err := h.CategoryService.HandleUpdate(ctx, *category); err != nil {
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
 		return
 	}
@@ -81,12 +61,7 @@ func (h *CategoryController) HandleUpdate(w http.ResponseWriter, r *http.Request
 }
 
 func (h *CategoryController) HandleGetById(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		utils.EncodeJSON(w, http.StatusMethodNotAllowed, utils.DefaultErrorResult())
-		return
-	}
-
-	idParam := strings.TrimPrefix(r.URL.Path, "/category/") 
+	idParam := chi.URLParam(r, "id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
@@ -104,11 +79,6 @@ func (h *CategoryController) HandleGetById(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *CategoryController) HandleList(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		utils.EncodeJSON(w, http.StatusMethodNotAllowed, utils.DefaultErrorResult())
-		return
-	}
-
 	ctx := r.Context()
 	categories, err := h.CategoryService.HandleList(ctx)
 	if err != nil {

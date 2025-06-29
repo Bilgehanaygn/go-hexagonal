@@ -16,22 +16,21 @@ type CategoryCommandController struct {
 func (h *CategoryCommandController) HandleCreate(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
 		utils.EncodeJSON(w, http.StatusMethodNotAllowed, utils.DefaultErrorResult())
 		return
 	}
 
 	var req request.CategoryCreateRequest
 	if err := utils.DecodeJSON(r, &req); err != nil { 
-		w.WriteHeader(http.StatusBadRequest)
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
+		return
 	}
 
 	category, err := req.ToDomainEntity()
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
+		return
 	} 
 
 
@@ -39,10 +38,9 @@ func (h *CategoryCommandController) HandleCreate(w http.ResponseWriter, r *http.
 	err = h.CategoryCommandService.HandleCreate(ctx, *category)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())
+		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	utils.EncodeJSON(w, http.StatusOK, utils.DefaultSuccessResult())
 }

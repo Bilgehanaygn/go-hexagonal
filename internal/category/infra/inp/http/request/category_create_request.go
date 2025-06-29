@@ -8,9 +8,9 @@ import (
 )
 
 type CategoryCreateRequest struct {
-	Name             string              `json:"isim"`
-	Kind             domain.CategoryKind `json:"kategoriTuru"`
-	ParentCategoryId uuid.UUID           `json:"ebeveynKategoriId"`
+	Name             string              `json:"name"`
+	Kind             domain.CategoryKind `json:"kind"`
+	ParentCategoryId uuid.UUID           `json:"parentCategoryId"`
 }
 
 func (request *CategoryCreateRequest) ToDomainEntity() (*domain.Category, error) {

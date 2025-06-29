@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
 
@@ -10,7 +11,6 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
-	"gorm.io/gorm"
 )
 
 type api struct {
@@ -46,12 +46,13 @@ func main() {
 
 	server := &http.Server{Addr: api.addr, Handler: mux}
 
-	gormDb := gorm.DB{}
-	categoryRepository := db.NewGormCategoryRepository(&gormDb)
+	// gormDb := gorm.DB{}
+	categoryRepository := db.NewGormCategoryRepository(nil)
 	categoryService := application.CategoryCommandService{CategoryRepository:categoryRepository}
 	categoryCommandController := controller.CategoryCommandController{CategoryCommandService: categoryService}
 
 	mux.HandleFunc("POST /kategori",  categoryCommandController.HandleCreate)
+	log.Printf("Listening on %v", port)
 
 	err := server.ListenAndServe()
 	if err != nil {

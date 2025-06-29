@@ -64,7 +64,7 @@ func (repo *GormCategoryRepository) List(ctx context.Context) ([]*domain.Categor
 		Error; err != nil {
 		return nil, err
 	}
-	
+
 	categories := make([]*domain.Category, len(dbCategories))
 	for i, dbCat := range dbCategories {
 		categories[i] = toDomainEntity(&dbCat)

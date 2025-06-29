@@ -15,7 +15,6 @@ func NewCategoryService(repository CategoryRepository) *CategoryService {
 	return &CategoryService{CategoryRepository: repository}
 }
 
-
 func (categoryService *CategoryService) HandleCreate(ctx context.Context, category domain.Category) error {
 	_, err := categoryService.CategoryRepository.Create(ctx, &category)
 

@@ -60,8 +60,7 @@ func main() {
 	}
 }
 
-
-func initializeCategoryHandlerChainAndRegister(r *chi.Mux, db *gorm.DB){
+func initializeCategoryHandlerChainAndRegister(r *chi.Mux, db *gorm.DB) {
 	cRepo := internalpg.NewGormCategoryRepository(db)
 	cSvc := application.CategoryService{CategoryRepository: cRepo}
 	cCtrl := controller.CategoryController{CategoryService: cSvc}

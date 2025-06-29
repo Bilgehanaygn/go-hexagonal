@@ -16,7 +16,6 @@ func DecodeJSON[T any](r *http.Request, dst *T) error {
 	return dec.Decode(dst)
 }
 
-
 func EncodeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)

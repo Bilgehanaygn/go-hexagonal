@@ -8,7 +8,7 @@ import (
 	"github.com/bilgehanaygn/urun/internal/category/application"
 	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/controller"
 	"github.com/bilgehanaygn/urun/internal/category/infra/out/db"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"

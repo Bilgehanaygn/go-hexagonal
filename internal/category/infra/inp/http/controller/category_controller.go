@@ -61,6 +61,7 @@ func (h *CategoryController) HandleUpdate(w http.ResponseWriter, r *http.Request
 }
 
 func (h *CategoryController) HandleGetById(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	idParam := chi.URLParam(r, "id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
@@ -68,7 +69,6 @@ func (h *CategoryController) HandleGetById(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	ctx := r.Context()
 	category, err := h.CategoryService.HandleGetById(ctx, id)
 	if err != nil {
 		utils.EncodeJSON(w, http.StatusBadRequest, utils.DefaultErrorResult())

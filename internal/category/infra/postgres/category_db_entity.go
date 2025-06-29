@@ -11,7 +11,7 @@ type CategoryDbEntity struct {
 	Name             string
 	Kind             domain.CategoryKind
 	Status           domain.ActivenessStatus
-	ParentCategoryId uuid.UUID
+	ParentCategoryId *uuid.UUID
 }
 
 func (CategoryDbEntity) TableName() string {

@@ -9,7 +9,7 @@ type CategoryDetailDto struct {
 	Id               uuid.UUID               `json:"id"`
 	Name             string                  `json:"name"`
 	Kind             domain.CategoryKind     `json:"kind"`
-	ParentCategoryId uuid.UUID               `json:"parentCategoryId"`
+	ParentCategoryId *uuid.UUID              `json:"parentCategoryId"`
 	Status           domain.ActivenessStatus `json:"status"`
 }
 

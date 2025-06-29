@@ -4,7 +4,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ~/DockerVolumes/go_urun/postgres:/var/lib/postgresql/data
       - ./create-dbs.sql:/docker-entrypoint-initdb.d/create-dbs.sql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:

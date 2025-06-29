@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/bilgehanaygn/urun/internal/category/domain"
+	"github.com/google/uuid"
 )
 
 type CategoryService struct {
@@ -33,4 +34,12 @@ func (categoryService *CategoryService) HandleUpdate(ctx context.Context, catego
 	}
 
 	return nil
+}
+
+func (s *CategoryService) HandleGetById(ctx context.Context, id uuid.UUID) (*domain.Category, error) {
+	return s.CategoryRepository.FindById(ctx, id)
+}
+
+func (s *CategoryService) HandleList(ctx context.Context) ([]*domain.Category, error) {
+	return s.CategoryRepository.List(ctx)
 }

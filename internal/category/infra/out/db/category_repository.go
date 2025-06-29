@@ -1,5 +1,6 @@
 package db
 
+/*
 import (
 	"context"
 
@@ -56,3 +57,4 @@ func (repo *GormCategoryRepository) FindById(ctx context.Context, id uuid.UUID) 
 
 	return toDomainEntity(&dbCategory), nil
 }
+*/

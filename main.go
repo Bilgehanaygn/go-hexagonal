@@ -15,6 +15,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -44,10 +45,13 @@ func main() {
 	api := &api{addr: ":" + port}
 	r := chi.NewRouter()
 	server := &http.Server{Addr: api.addr, Handler: r}
-	gormDb := gorm.DB{}
 
+	gormDB, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect database: %v", err)
+	}
 
-	initializeCategoryHandlerChainAndRegister(r, &gormDb)
+	initializeCategoryHandlerChainAndRegister(r, gormDB)
 
 	log.Printf("Listening on %v", port)
 	err = server.ListenAndServe()

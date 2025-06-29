@@ -13,3 +13,7 @@ type CategoryDbEntity struct {
 	Status           domain.ActivenessStatus
 	ParentCategoryId uuid.UUID
 }
+
+func (CategoryDbEntity) TableName() string {
+	return "category"
+}

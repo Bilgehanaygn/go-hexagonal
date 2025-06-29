@@ -3,6 +3,7 @@ CREATE TABLE category (
   name              VARCHAR(255) NOT NULL,
   kind              VARCHAR(50)  NOT NULL,
   status            VARCHAR(20)  NOT NULL,
-  created_date      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  last_modified_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+  created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  version INTEGER NOT NULL DEFAULT 1
 );

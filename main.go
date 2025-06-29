@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/bilgehanaygn/urun/internal/category/application"
+	router "github.com/bilgehanaygn/urun/internal/category/infra/inp/http"
 	"github.com/bilgehanaygn/urun/internal/category/infra/inp/http/controller"
 	"github.com/bilgehanaygn/urun/internal/category/infra/out/db"
 	"github.com/go-chi/chi/v5"
@@ -48,14 +49,9 @@ func main() {
 	server := &http.Server{Addr: api.addr, Handler: r}
 
 	// gormDb := gorm.DB{}
-	categoryRepository := db.NewMockCategoryRepository(nil)
-	categoryService := application.CategoryService{CategoryRepository:categoryRepository}
-	categoryController := controller.CategoryController{CategoryService: categoryService}
 
-	r.Post("/category",  categoryController.HandleCreate)
-	r.Put("/category",   categoryController.HandleUpdate)
-	r.Get("/category",   categoryController.HandleList)
-	r.Get("/category/{id}", categoryController.HandleGetById)
+
+	initializeCategoryHandlerChainAndRegister(r)
 
 	log.Printf("Listening on %v", port)
 
@@ -63,4 +59,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+
+func initializeCategoryHandlerChainAndRegister(r *chi.Mux){
+	cRepo := db.NewMockCategoryRepository(nil)
+	cSvc := application.CategoryService{CategoryRepository: cRepo}
+	cCtrl := controller.CategoryController{CategoryService: cSvc}
+	router.Register(r, &cCtrl)
 }

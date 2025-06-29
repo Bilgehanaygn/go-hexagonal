@@ -19,7 +19,7 @@ func (request *CategoryCreateRequest) ToDomainEntity() (*domain.Category, error)
 			return nil, fmt.Errorf("main category cannot have a parent category")
 		}
 	} else {
-		if request.ParentCategoryId == uuid.Nil {
+		if request.ParentCategoryId == uuid.Nil && request.Kind != domain.MAIN_CATEGORY {
 			return nil, fmt.Errorf("%q must have a parent category", request.Kind)
 		}
 	}

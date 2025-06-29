@@ -1,5 +1,5 @@
-CREATE TABLE categories (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+CREATE TABLE category (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name              VARCHAR(255) NOT NULL,
   kind              VARCHAR(50)  NOT NULL,
   status            VARCHAR(20)  NOT NULL,

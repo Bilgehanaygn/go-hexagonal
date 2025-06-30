@@ -41,6 +41,8 @@ func main() {
 		log.Fatalf("failed to initialize migrations: %v", err)
 	}
 
+	// TODO: db connection closing should be handled inside the graceful shutdown method
+	// also does the migration opens a connection itself? or does it use the gorms underlying connection pools??
 	defer m.Close()
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("migration failed: %v", err)
@@ -50,11 +52,11 @@ func main() {
 	r := chi.NewRouter()
 	server := &http.Server{Addr: api.addr, Handler: r}
 
-	gormDB, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
+	gormDB := initializeGorm(dbUrl)
 	initializeCategoryHandlerChainAndRegister(r, gormDB)
 
 	go func(){
@@ -90,4 +92,23 @@ func gracefulShutdown(srv *http.Server) {
     } else {
         log.Println("server shut down gracefully")
     }
+}
+
+func initializeGorm(dbUrl string) *gorm.DB {
+	gormDB, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
+	if err != nil {
+	log.Fatal(err)
+	}
+
+	db, err := gormDB.DB() 
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxIdleTime(time.Minute * 3)
+	db.SetConnMaxLifetime(time.Hour)
+
+	return gormDB
 }

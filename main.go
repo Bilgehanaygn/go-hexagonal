@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/bilgehanaygn/urun/internal/category/application"
 	router "github.com/bilgehanaygn/urun/internal/category/infra/http"
@@ -53,11 +57,12 @@ func main() {
 
 	initializeCategoryHandlerChainAndRegister(r, gormDB)
 
-	log.Printf("Listening on %v", port)
-	err = server.ListenAndServe()
-	if err != nil {
-		panic(err)
-	}
+	go func(){
+		log.Printf("Listening on %v", port)
+		err = server.ListenAndServe()
+	}()
+
+	gracefulShutdown(server)
 }
 
 func initializeCategoryHandlerChainAndRegister(r *chi.Mux, db *gorm.DB) {
@@ -65,4 +70,24 @@ func initializeCategoryHandlerChainAndRegister(r *chi.Mux, db *gorm.DB) {
 	cSvc := application.CategoryService{CategoryRepository: cRepo}
 	cCtrl := controller.CategoryController{CategoryService: cSvc}
 	router.Register(r, &cCtrl)
+}
+
+func gracefulShutdown(srv *http.Server) {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	<-ctx.Done() 
+	log.Println("interruption signal received, shutting down server…")
+
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+
+    if err := srv.Shutdown(timeoutCtx); err != nil {
+        log.Printf("graceful shutdown did not complete in 5s: %v", err)
+        if err2 := srv.Close(); err2 != nil {
+            log.Printf("error forcing server close: %v", err2)
+        }
+    } else {
+        log.Println("server shut down gracefully")
+    }
 }

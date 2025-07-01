@@ -27,17 +27,3 @@ func (repo *CatalogQueryRepository) GetDtoById(ctx context.Context, id uuid.UUID
 	}
 	return toCatalogDetailDto(&dbCatalog), nil
 }
-
-func (repo *CatalogQueryRepository) GetDtoList(ctx context.Context) ([]*response.CatalogDetailDto, error) {
-	var dbCatalogs []CatalogDbEntity
-	if err := repo.db.WithContext(ctx).
-		Find(&dbCatalogs).
-		Error; err != nil {
-		return nil, err
-	}
-	dtos := make([]*response.CatalogDetailDto, len(dbCatalogs))
-	for i, dbCat := range dbCatalogs {
-		dtos[i] = toCatalogDetailDto(&dbCat)
-	}
-	return dtos, nil
-} 

@@ -6,31 +6,59 @@ import (
 	"github.com/bilgehanaygn/urun/internal/common/postgres"
 )
 
-func toDbEntity(catalog *domain.Catalog) *CatalogDbEntity {
-	dbCatalog := &CatalogDbEntity{
-		BaseEntity: postgres.BaseEntity{
-			ID: catalog.Id,
-		},
-		Name:     catalog.Name,
-		// Products: convert to []uuid.UUID if needed
+func toDbEntity(cat *domain.Catalog) *CatalogDbEntity {
+	cpDbs := make([]CatalogProductDbEntity, len(cat.CatalogProducts))
+
+	for i, cp := range cat.CatalogProducts {
+		cpDbs[i] = CatalogProductDbEntity{
+			BaseEntity: postgres.BaseEntity{ID: cp.Id},
+			CatalogId:  cat.Id,
+			ProductId:  cp.ProductId,
+			Price:      cp.Price,
+		}
 	}
-	return dbCatalog
+
+	return &CatalogDbEntity{
+		BaseEntity:       postgres.BaseEntity{ID: cat.Id},
+		Name:             cat.Name,
+		CatalogProducts:  cpDbs,
+	}
 }
 
-func toDomainEntity(dbCatalog *CatalogDbEntity) *domain.Catalog {
-	catalog := domain.Catalog{
-		Id:       dbCatalog.BaseEntity.ID,
-		Name:     dbCatalog.Name,
-		// Products: convert from []uuid.UUID if needed
+func toDomainEntity(dbCat *CatalogDbEntity) *domain.Catalog {
+	cps := make([]domain.CatalogProduct, len(dbCat.CatalogProducts))
+
+	for i, cp := range dbCat.CatalogProducts {
+		cps[i] = domain.CatalogProduct{
+			Id:        cp.BaseEntity.ID,
+			CatalogId: cp.CatalogId,
+			ProductId: cp.ProductId,
+			Price:     cp.Price,
+		}
 	}
-	return &catalog
+
+	return &domain.Catalog{
+		Id:              dbCat.BaseEntity.ID,
+		Name:            dbCat.Name,
+		CatalogProducts: cps,
+	}
 }
 
-func toCatalogDetailDto(dbCatalog *CatalogDbEntity) *response.CatalogDetailDto {
-	dto := response.CatalogDetailDto{
-		Id:   dbCatalog.BaseEntity.ID,
-		Name: dbCatalog.Name,
-		// Products: convert from []uuid.UUID if needed
+func toCatalogDetailDto(dbCat *CatalogDbEntity) *response.CatalogDetailDto {
+	cpDtos := make([]response.CatalogProductDto, len(dbCat.CatalogProducts))
+
+	for i, cp := range dbCat.CatalogProducts {
+		cpDtos[i] = response.CatalogProductDto{
+			Id:        cp.BaseEntity.ID,
+			CatalogId: dbCat.BaseEntity.ID,
+			ProductId: cp.ProductId,
+			Price:     cp.Price,
+		}
 	}
-	return &dto
-} 
+
+	return &response.CatalogDetailDto{
+		Id:              dbCat.BaseEntity.ID,
+		Name:            dbCat.Name,
+		CatalogProducts: cpDtos,
+	}
+}

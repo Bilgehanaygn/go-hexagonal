@@ -18,13 +18,15 @@ func NewCatalogCommandPort(db *gorm.DB) ports.CatalogCommandPort {
 	return &CatalogCommandRepository{db: db}
 }
 
-func (repo *CatalogCommandRepository) Create(ctx context.Context, catalog *domain.Catalog) (*uuid.UUID, error) {
-	dbCatalog := toDbEntity(catalog)
-	if err := repo.db.Create(dbCatalog).Error; err != nil {
+func (r *CatalogCommandRepository) Create(ctx context.Context, cat *domain.Catalog) (*uuid.UUID, error) {
+	dbCat := toDbEntity(cat)
+
+	if err := r.db.WithContext(ctx).Create(dbCat).Error; err != nil {
 		return nil, err
 	}
-	return &dbCatalog.BaseEntity.ID, nil
+	return &dbCat.BaseEntity.ID, nil
 }
+
 
 func (repo *CatalogCommandRepository) Update(ctx context.Context, catalog *domain.Catalog) (*uuid.UUID, error) {
 	dbCatalog := toDbEntity(catalog)

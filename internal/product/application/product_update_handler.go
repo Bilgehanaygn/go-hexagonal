@@ -3,9 +3,9 @@ package application
 import (
 	"context"
 
-	"urun/internal/product/application/ports"
-	"urun/internal/product/infra/http/request"
-	"urun/internal/product/infra/http/response"
+	"github.com/bilgehanaygn/urun/internal/product/application/ports"
+	"github.com/bilgehanaygn/urun/internal/product/infra/http/request"
+	"github.com/bilgehanaygn/urun/internal/product/infra/http/response"
 )
 
 type ProductUpdateHandler struct {
@@ -23,5 +23,5 @@ func (productUpdateHandler *ProductUpdateHandler) Handle(ctx context.Context, re
 		return nil, err
 	}
 
-	return &response.ProductUpdateResponse{Id: product.ID}, nil
+	return &response.ProductUpdateResponse{Id: product.Id}, nil
 } 

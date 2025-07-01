@@ -3,9 +3,9 @@ package application
 import (
 	"context"
 
-	"urun/internal/product/application/ports"
-	"urun/internal/product/infra/http/request"
-	"urun/internal/product/infra/http/response"
+	"github.com/bilgehanaygn/urun/internal/product/application/ports"
+	"github.com/bilgehanaygn/urun/internal/product/infra/http/request"
+	"github.com/bilgehanaygn/urun/internal/product/infra/http/response"
 )
 
 type ProductCreateHandler struct {
@@ -18,10 +18,10 @@ func (productCreateHandler *ProductCreateHandler) Handle(ctx context.Context, re
 		return nil, err
 	}
 
-	_, err = productCreateHandler.ProductCPort.Create(ctx, product)
+	id, err := productCreateHandler.ProductCPort.Create(ctx, product)
 	if err != nil {
 		return nil, err
 	}
 
-	return &response.ProductCreateResponse{Id: product.ID}, nil
+	return &response.ProductCreateResponse{Id: *id}, nil
 } 

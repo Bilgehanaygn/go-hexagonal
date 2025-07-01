@@ -2,8 +2,9 @@ package postgres
 
 import (
 	"context"
-	"urun/internal/product/application/ports"
-	"urun/internal/product/domain"
+
+	"github.com/bilgehanaygn/urun/internal/product/application/ports"
+	"github.com/bilgehanaygn/urun/internal/product/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -21,7 +22,7 @@ func (repo *ProductCommandRepository) Create(ctx context.Context, product *domai
 	if err := repo.db.Create(dbProduct).Error; err != nil {
 		return nil, err
 	}
-	return &dbProduct.ID, nil
+	return &dbProduct.BaseEntity.ID, nil
 }
 
 func (repo *ProductCommandRepository) Update(ctx context.Context, product *domain.Product) (*uuid.UUID, error) {
@@ -29,7 +30,7 @@ func (repo *ProductCommandRepository) Update(ctx context.Context, product *domai
 	result := repo.db.
 		WithContext(ctx).
 		Model(&ProductDbEntity{}).
-		Where("id = ?", dbProduct.ID).
+		Where("id = ?", dbProduct.BaseEntity.ID).
 		Updates(dbProduct)
 	if err := result.Error; err != nil {
 		return nil, err
@@ -37,7 +38,7 @@ func (repo *ProductCommandRepository) Update(ctx context.Context, product *domai
 	if result.RowsAffected == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-	return &dbProduct.ID, nil
+	return &dbProduct.BaseEntity.ID, nil
 }
 
 func (repo *ProductCommandRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Product, error) {

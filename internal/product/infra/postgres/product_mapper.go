@@ -1,15 +1,15 @@
 package postgres
 
 import (
-	"urun/internal/product/domain"
-	"urun/internal/product/infra/http/response"
-	"urun/internal/common/postgres"
+	"github.com/bilgehanaygn/urun/internal/common/postgres"
+	"github.com/bilgehanaygn/urun/internal/product/domain"
+	"github.com/bilgehanaygn/urun/internal/product/infra/http/response"
 )
 
 func toDbEntity(product *domain.Product) *ProductDbEntity {
 	dbProduct := &ProductDbEntity{
 		BaseEntity: postgres.BaseEntity{
-			ID: product.ID,
+			ID: product.Id,
 		},
 		Name:  product.Name,
 		Price: product.Price,
@@ -19,7 +19,6 @@ func toDbEntity(product *domain.Product) *ProductDbEntity {
 
 func toDomainEntity(dbProduct *ProductDbEntity) *domain.Product {
 	product := domain.Product{
-		BaseEntity: dbProduct.BaseEntity,
 		Name:      dbProduct.Name,
 		Price:     dbProduct.Price,
 	}

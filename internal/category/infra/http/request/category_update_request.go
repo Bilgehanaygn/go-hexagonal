@@ -8,6 +8,7 @@ import (
 )
 
 type CategoryUpdateRequest struct {
+	ID               uuid.UUID           `json:"id"`
 	Name             string              `json:"name"`
 	Kind             domain.CategoryKind `json:"kind"`
 	ParentCategoryId *uuid.UUID          `json:"parentCategoryId,omitempty"`
@@ -25,7 +26,7 @@ func (request *CategoryUpdateRequest) ToDomainEntity() (*domain.Category, error)
 	}
 
 	return &domain.Category{
-		Id:               uuid.New(),
+		Id:               request.ID,
 		Name:             request.Name,
 		Kind:             domain.CategoryKind(request.Kind),
 		ParentCategoryId: request.ParentCategoryId,

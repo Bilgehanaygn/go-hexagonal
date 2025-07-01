@@ -2,7 +2,8 @@ package ports
 
 import (
 	"context"
-	"urun/internal/product/infra/http/response"
+
+	"github.com/bilgehanaygn/urun/internal/product/infra/http/response"
 	"github.com/google/uuid"
 )
 

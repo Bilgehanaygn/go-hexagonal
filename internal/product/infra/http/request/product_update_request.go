@@ -1,7 +1,7 @@
 package request
 
 import (
-	"urun/internal/product/domain"
+	"github.com/bilgehanaygn/urun/internal/product/domain"
 	"github.com/google/uuid"
 )
 
@@ -13,9 +13,7 @@ type ProductUpdateRequest struct {
 
 func (request *ProductUpdateRequest) ToDomainEntity() (*domain.Product, error) {
 	return &domain.Product{
-		BaseEntity: domain.BaseEntity{
-			ID: request.ID,
-		},
+		Id:    request.ID,
 		Name:  request.Name,
 		Price: request.Price,
 	}, nil

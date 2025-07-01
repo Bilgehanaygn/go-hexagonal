@@ -1,8 +1,7 @@
 package request
 
 import (
-	"urun/internal/product/domain"
-	"github.com/google/uuid"
+	"github.com/bilgehanaygn/urun/internal/product/domain"
 )
 
 type ProductCreateRequest struct {
@@ -12,9 +11,6 @@ type ProductCreateRequest struct {
 
 func (request *ProductCreateRequest) ToDomainEntity() (*domain.Product, error) {
 	return &domain.Product{
-		BaseEntity: domain.BaseEntity{
-			ID: uuid.New(),
-		},
 		Name:  request.Name,
 		Price: request.Price,
 	}, nil

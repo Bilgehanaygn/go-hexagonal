@@ -2,8 +2,9 @@ package postgres
 
 import (
 	"context"
-	"urun/internal/product/application/ports"
-	"urun/internal/product/infra/http/response"
+
+	"github.com/bilgehanaygn/urun/internal/product/application/ports"
+	"github.com/bilgehanaygn/urun/internal/product/infra/http/response"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )

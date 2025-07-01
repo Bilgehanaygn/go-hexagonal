@@ -1,9 +1,8 @@
 package postgres
 
-import (
-	"urun/internal/product/domain"
-	"urun/internal/common/postgres"
-)
+import "github.com/bilgehanaygn/urun/internal/common/postgres"
+
+
 
 type ProductDbEntity struct {
 	postgres.BaseEntity

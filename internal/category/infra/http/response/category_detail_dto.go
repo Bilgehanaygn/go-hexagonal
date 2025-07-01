@@ -12,13 +12,3 @@ type CategoryDetailDto struct {
 	ParentCategoryId *uuid.UUID              `json:"parentCategoryId"`
 	Status           domain.ActivenessStatus `json:"status"`
 }
-
-func NewCategoryDetailDTO(category *domain.Category) CategoryDetailDto {
-	return CategoryDetailDto{
-		Id:               category.Id,
-		Name:             category.Name,
-		Kind:             category.Kind,
-		ParentCategoryId: category.ParentCategoryId,
-		Status:           category.Status,
-	}
-}

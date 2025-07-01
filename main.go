@@ -9,10 +9,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bilgehanaygn/urun/internal/api"
 	"github.com/bilgehanaygn/urun/internal/category/application"
-	router "github.com/bilgehanaygn/urun/internal/category/infra/http"
-	"github.com/bilgehanaygn/urun/internal/category/infra/http/controller"
+	"github.com/bilgehanaygn/urun/internal/category/infra/http/request"
+	"github.com/bilgehanaygn/urun/internal/category/infra/http/response"
 	internalpg "github.com/bilgehanaygn/urun/internal/category/infra/postgres"
+	"github.com/google/uuid"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/golang-migrate/migrate/v4"
 
@@ -22,10 +25,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-type api struct {
-	addr string
-}
 
 func main() {
 	godotenv.Load()
@@ -48,30 +47,31 @@ func main() {
 		log.Fatalf("migration failed: %v", err)
 	}
 
-	api := &api{addr: ":" + port}
 	r := chi.NewRouter()
-	server := &http.Server{Addr: api.addr, Handler: r}
+	server := &http.Server{Addr: ":" + port, Handler: r}
 
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
 	gormDB := initializeGorm(dbUrl)
-	initializeCategoryHandlerChainAndRegister(r, gormDB)
+	categoryCommandPort := internalpg.NewCategoryCommandPort(gormDB)
+	categoryQueryPort := internalpg.NewCategoryQueryPort(gormDB)
+	categoryCreateHandler := &application.CategoryCreateHandler{CategoryCPort: categoryCommandPort}
+	categoryUpdateHandler := &application.CategoryUpdateHandler{CategoryCPort: categoryCommandPort}
+	categoryQueryHandler := &application.CategoryQueryHandler{CategoryQPort: categoryQueryPort}
 
+	r.Route("/category", func(r chi.Router) {
+		r.Post("/", api.MakeHTTPHandler[request.CategoryCreateRequest, response.CategoryCreateResponse](categoryCreateHandler))
+		r.Put("/", api.MakeHTTPHandler[request.CategoryUpdateRequest, response.CategoryUpdateResponse](categoryUpdateHandler))
+		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, response.CategoryDetailDto](categoryQueryHandler.HandleGetById))
+	})
 	go func(){
 		log.Printf("Listening on %v", port)
 		err = server.ListenAndServe()
 	}()
 
 	gracefulShutdown(server)
-}
-
-func initializeCategoryHandlerChainAndRegister(r *chi.Mux, db *gorm.DB) {
-	cRepo := internalpg.NewGormCategoryRepository(db)
-	cSvc := application.CategoryService{CategoryRepository: cRepo}
-	cCtrl := controller.CategoryController{CategoryService: cSvc}
-	router.Register(r, &cCtrl)
 }
 
 func gracefulShutdown(srv *http.Server) {

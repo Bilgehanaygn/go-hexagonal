@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"github.com/bilgehanaygn/urun/internal/category/domain"
+	"github.com/bilgehanaygn/urun/internal/category/infra/http/response"
 	"github.com/bilgehanaygn/urun/internal/common/postgres"
 )
 
@@ -29,4 +30,16 @@ func toDomainEntity(dbCategory *CategoryDbEntity) *domain.Category {
 	}
 
 	return &category
+}
+
+func toCategoryDetailDto(dbCategory *CategoryDbEntity) *response.CategoryDetailDto {
+	dto := response.CategoryDetailDto {
+		Id: dbCategory.BaseEntity.ID,
+		Name: dbCategory.Name,
+		Kind: dbCategory.Kind,
+		ParentCategoryId: dbCategory.ParentCategoryId,
+		Status: dbCategory.Status,
+	}
+
+	return &dto
 }

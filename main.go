@@ -59,12 +59,12 @@ func main() {
 	categoryQueryPort := internalpg.NewCategoryQueryPort(gormDB)
 	categoryCreateHandler := &application.CategoryCreateHandler{CategoryCPort: categoryCommandPort}
 	categoryUpdateHandler := &application.CategoryUpdateHandler{CategoryCPort: categoryCommandPort}
-	categoryQueryHandler := &application.CategoryQueryHandler{CategoryQPort: categoryQueryPort}
+	categoryGetHandler := &application.CategoryQueryHandler{CategoryQPort: categoryQueryPort}
 
 	r.Route("/category", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[request.CategoryCreateRequest, response.CategoryCreateResponse](categoryCreateHandler))
 		r.Put("/", api.MakeHTTPHandler[request.CategoryUpdateRequest, response.CategoryUpdateResponse](categoryUpdateHandler))
-		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, response.CategoryDetailDto](categoryQueryHandler.HandleGetById))
+		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, response.CategoryDetailDto](categoryGetHandler))
 	})
 	go func(){
 		log.Printf("Listening on %v", port)

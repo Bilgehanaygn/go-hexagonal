@@ -12,9 +12,9 @@ type CategoryQueryHandler struct {
 	CategoryQPort ports.CategoryQueryPort
 }
 
-func (categoryQHandler *CategoryQueryHandler) HandleGetById(ctx context.Context, id uuid.UUID) (*response.CategoryDetailDto, error) {
+func (categoryQHandler *CategoryQueryHandler) Handle(ctx context.Context, id *uuid.UUID) (*response.CategoryDetailDto, error) {
 
-	category, err := categoryQHandler.CategoryQPort.GetDtoById(ctx, id)
+	category, err := categoryQHandler.CategoryQPort.GetDtoById(ctx, *id)
 	if err != nil {
 		return nil, err
 	}

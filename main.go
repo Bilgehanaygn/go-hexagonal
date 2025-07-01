@@ -40,9 +40,6 @@ func main() {
 		log.Fatalf("failed to initialize migrations: %v", err)
 	}
 
-	// TODO: db connection closing should be handled inside the graceful shutdown method
-	// also does the migration opens a connection itself? or does it use the gorms underlying connection pools??
-	defer m.Close()
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("migration failed: %v", err)
 	}
@@ -71,10 +68,10 @@ func main() {
 		err = server.ListenAndServe()
 	}()
 
-	gracefulShutdown(server)
+	gracefulShutdown(server, gormDB)
 }
 
-func gracefulShutdown(srv *http.Server) {
+func gracefulShutdown(srv *http.Server, gormDB *gorm.DB) {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
@@ -91,6 +88,17 @@ func gracefulShutdown(srv *http.Server) {
         }
     } else {
         log.Println("server shut down gracefully")
+    }
+
+	sqlDB, err := gormDB.DB()
+    if err != nil {
+        log.Printf("could not retrieve raw DB from GORM: %v", err)
+        return
+    }
+    if err := sqlDB.Close(); err != nil {
+        log.Printf("error closing DB pool: %v", err)
+    } else {
+        log.Println("database connection pool closed")
     }
 }
 

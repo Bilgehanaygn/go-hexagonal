@@ -16,6 +16,11 @@ import (
 	internalpg "github.com/bilgehanaygn/urun/internal/category/infra/postgres"
 	"github.com/google/uuid"
 
+	productapplication "github.com/bilgehanaygn/urun/internal/product/application"
+	productreq "github.com/bilgehanaygn/urun/internal/product/infra/http/request"
+	productres "github.com/bilgehanaygn/urun/internal/product/infra/http/response"
+	productpg "github.com/bilgehanaygn/urun/internal/product/infra/postgres"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/golang-migrate/migrate/v4"
 
@@ -52,17 +57,29 @@ func main() {
 	}
 
 	gormDB := initializeGorm(dbUrl)
-	categoryCommandPort := internalpg.NewCategoryCommandPort(gormDB)
-	categoryQueryPort := internalpg.NewCategoryQueryPort(gormDB)
-	categoryCreateHandler := &application.CategoryCreateHandler{CategoryCPort: categoryCommandPort}
-	categoryUpdateHandler := &application.CategoryUpdateHandler{CategoryCPort: categoryCommandPort}
-	categoryGetHandler := &application.CategoryQueryHandler{CategoryQPort: categoryQueryPort}
+	categoryCPort := internalpg.NewCategoryCommandPort(gormDB)
+	categoryQPort := internalpg.NewCategoryQueryPort(gormDB)
+	categoryCreateHandler := &application.CategoryCreateHandler{CategoryCPort: categoryCPort}
+	categoryUpdateHandler := &application.CategoryUpdateHandler{CategoryCPort: categoryCPort}
+	categoryGetHandler := &application.CategoryQueryHandler{CategoryQPort: categoryQPort}
+
+	productCPort := productpg.NewProductCommandPort(gormDB)
+	productQPort := productpg.NewProductQueryPort(gormDB)
+
+	productCreateHandler := &productapplication.ProductCreateHandler{ProductCPort: productCPort}
+	productGetHandler := &productapplication.ProductGetHandler{ProductQPort: productQPort}
+
 
 	r.Route("/category", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[request.CategoryCreateRequest, response.CategoryCreateResponse](categoryCreateHandler))
 		r.Put("/", api.MakeHTTPHandler[request.CategoryUpdateRequest, response.CategoryUpdateResponse](categoryUpdateHandler))
 		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, response.CategoryDetailDto](categoryGetHandler))
 	})
+	r.Route("/product", func(r chi.Router) {
+		r.Post("/", api.MakeHTTPHandler[productreq.ProductCreateRequest, productres.ProductCreateResponse](productCreateHandler))
+		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, productres.ProductDetailDto](productGetHandler))
+	})
+
 	go func(){
 		log.Printf("Listening on %v", port)
 		err = server.ListenAndServe()

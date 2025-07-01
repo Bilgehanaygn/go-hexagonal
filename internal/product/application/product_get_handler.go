@@ -8,11 +8,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type ProductQueryHandler struct {
+type ProductGetHandler struct {
 	ProductQPort ports.ProductQueryPort
 }
 
-func (productQHandler *ProductQueryHandler) Handle(ctx context.Context, id *uuid.UUID) (*response.ProductDetailDto, error) {
+func (productQHandler *ProductGetHandler) Handle(ctx context.Context, id *uuid.UUID) (*response.ProductDetailDto, error) {
 	product, err := productQHandler.ProductQPort.GetDtoById(ctx, *id)
 	if err != nil {
 		return nil, err

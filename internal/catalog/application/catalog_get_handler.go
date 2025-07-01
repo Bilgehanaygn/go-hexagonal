@@ -9,11 +9,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type CatalogQueryHandler struct {
+type CatalogGetHandler struct {
 	CatalogQPort ports.CatalogQueryPort
 }
 
-func (catalogQHandler *CatalogQueryHandler) Handle(ctx context.Context, id *uuid.UUID) (*response.CatalogDetailDto, error) {
+func (catalogQHandler *CatalogGetHandler) Handle(ctx context.Context, id *uuid.UUID) (*response.CatalogDetailDto, error) {
 	catalog, err := catalogQHandler.CatalogQPort.GetDtoById(ctx, *id)
 	if err != nil {
 		return nil, err

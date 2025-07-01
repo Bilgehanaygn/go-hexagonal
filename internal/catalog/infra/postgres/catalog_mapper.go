@@ -26,10 +26,10 @@ func toDbEntity(cat *domain.Catalog) *CatalogDbEntity {
 }
 
 func toDomainEntity(dbCat *CatalogDbEntity) *domain.Catalog {
-	cps := make([]domain.CatalogProduct, len(dbCat.CatalogProducts))
+	cps := make([]*domain.CatalogProduct, len(dbCat.CatalogProducts))
 
 	for i, cp := range dbCat.CatalogProducts {
-		cps[i] = domain.CatalogProduct{
+		cps[i] = &domain.CatalogProduct{
 			Id:        cp.BaseEntity.ID,
 			CatalogId: cp.CatalogId,
 			ProductId: cp.ProductId,

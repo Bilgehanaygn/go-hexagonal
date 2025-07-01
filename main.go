@@ -21,6 +21,11 @@ import (
 	productres "github.com/bilgehanaygn/urun/internal/product/infra/http/response"
 	productpg "github.com/bilgehanaygn/urun/internal/product/infra/postgres"
 
+	catalogapplication "github.com/bilgehanaygn/urun/internal/catalog/application"
+	catalogreq "github.com/bilgehanaygn/urun/internal/catalog/infra/http/request"
+	catalogres "github.com/bilgehanaygn/urun/internal/catalog/infra/http/response"
+	catalogpg "github.com/bilgehanaygn/urun/internal/catalog/infra/postgres"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/golang-migrate/migrate/v4"
 
@@ -65,9 +70,13 @@ func main() {
 
 	productCPort := productpg.NewProductCommandPort(gormDB)
 	productQPort := productpg.NewProductQueryPort(gormDB)
-
 	productCreateHandler := &productapplication.ProductCreateHandler{ProductCPort: productCPort}
 	productGetHandler := &productapplication.ProductGetHandler{ProductQPort: productQPort}
+
+	catalogCPort := catalogpg.NewCatalogCommandPort(gormDB)
+	catalogQPort := catalogpg.NewCatalogQueryPort(gormDB)
+	catalogCreateHandler := &catalogapplication.CatalogCreateHandler{CatalogCPort: catalogCPort}
+	catalogGetHandler := &catalogapplication.CatalogGetHandler{CatalogQPort: catalogQPort}
 
 
 	r.Route("/category", func(r chi.Router) {
@@ -78,6 +87,10 @@ func main() {
 	r.Route("/product", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[productreq.ProductCreateRequest, productres.ProductCreateResponse](productCreateHandler))
 		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, productres.ProductDetailDto](productGetHandler))
+	})
+	r.Route("/catalog", func(r chi.Router) {
+		r.Post("/", api.MakeHTTPHandler[catalogreq.CatalogCreateRequest, catalogres.CatalogCreateResponse](catalogCreateHandler))
+		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, catalogres.CatalogDetailDto](catalogGetHandler))
 	})
 
 	go func(){

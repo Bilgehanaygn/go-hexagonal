@@ -9,7 +9,7 @@ import (
 func toDbEntity(product *domain.Product) *ProductDbEntity {
 	dbProduct := &ProductDbEntity{
 		BaseEntity: postgres.BaseEntity{
-			ID: product.Id,
+			Id: product.Id,
 		},
 		Name:  product.Name,
 		Price: product.Price,
@@ -27,7 +27,7 @@ func toDomainEntity(dbProduct *ProductDbEntity) *domain.Product {
 
 func toProductDetailDto(dbProduct *ProductDbEntity) *response.ProductDetailDto {
 	dto := response.ProductDetailDto{
-		Id:    dbProduct.BaseEntity.ID,
+		Id:    dbProduct.BaseEntity.Id,
 		Name:  dbProduct.Name,
 		Price: dbProduct.Price,
 	}

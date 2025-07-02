@@ -23,7 +23,7 @@ func (repo *CategoryCommandRepository) Create(ctx context.Context, category *dom
 		return nil, err
 	}
 
-	return &dbCategory.ID, nil
+	return &dbCategory.Id, nil
 }
 
 func (repo *CategoryCommandRepository) Update(ctx context.Context, category *domain.Category) (*uuid.UUID, error) {
@@ -32,7 +32,7 @@ func (repo *CategoryCommandRepository) Update(ctx context.Context, category *dom
 	result := repo.db.
 		WithContext(ctx).
 		Model(&CategoryDbEntity{}).
-		Where("id = ?", dbCategory.ID).
+		Where("id = ?", dbCategory.Id).
 		Updates(dbCategory)
 
 	if err := result.Error; err != nil {
@@ -43,7 +43,7 @@ func (repo *CategoryCommandRepository) Update(ctx context.Context, category *dom
 		return nil, gorm.ErrRecordNotFound
 	}
 
-	return &dbCategory.ID, nil
+	return &dbCategory.Id, nil
 }
 
 func (repo *CategoryCommandRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Category, error) {

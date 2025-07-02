@@ -9,7 +9,7 @@ import (
 func toDbEntity(category *domain.Category) *CategoryDbEntity {
 	dbCategory := &CategoryDbEntity{
 		BaseEntity: postgres.BaseEntity{
-			ID: category.Id,
+			Id: category.Id,
 		},
 		Name:   category.Name,
 		Kind:   category.Kind,
@@ -22,7 +22,7 @@ func toDbEntity(category *domain.Category) *CategoryDbEntity {
 func toDomainEntity(dbCategory *CategoryDbEntity) *domain.Category {
 
 	category := domain.Category{
-		Id:               dbCategory.BaseEntity.ID,
+		Id:               dbCategory.BaseEntity.Id,
 		Name:             dbCategory.Name,
 		Kind:             dbCategory.Kind,
 		ParentCategoryId: dbCategory.ParentCategoryId,
@@ -34,7 +34,7 @@ func toDomainEntity(dbCategory *CategoryDbEntity) *domain.Category {
 
 func toCategoryDetailDto(dbCategory *CategoryDbEntity) *response.CategoryDetailDto {
 	dto := response.CategoryDetailDto {
-		Id: dbCategory.BaseEntity.ID,
+		Id: dbCategory.BaseEntity.Id,
 		Name: dbCategory.Name,
 		Kind: dbCategory.Kind,
 		ParentCategoryId: dbCategory.ParentCategoryId,

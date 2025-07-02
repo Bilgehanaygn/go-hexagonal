@@ -24,7 +24,7 @@ func (r *CatalogCommandRepository) Create(ctx context.Context, cat *domain.Catal
 	if err := r.db.WithContext(ctx).Create(dbCat).Error; err != nil {
 		return nil, err
 	}
-	return &dbCat.BaseEntity.ID, nil
+	return &dbCat.BaseEntity.Id, nil
 }
 
 
@@ -33,7 +33,7 @@ func (repo *CatalogCommandRepository) Update(ctx context.Context, catalog *domai
 	result := repo.db.
 		WithContext(ctx).
 		Model(&CatalogDbEntity{}).
-		Where("id = ?", dbCatalog.BaseEntity.ID).
+		Where("id = ?", dbCatalog.BaseEntity.Id).
 		Updates(dbCatalog)
 	if err := result.Error; err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (repo *CatalogCommandRepository) Update(ctx context.Context, catalog *domai
 	if result.RowsAffected == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-	return &dbCatalog.BaseEntity.ID, nil
+	return &dbCatalog.BaseEntity.Id, nil
 }
 
 func (repo *CatalogCommandRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Catalog, error) {

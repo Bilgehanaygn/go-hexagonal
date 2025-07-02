@@ -22,7 +22,7 @@ func (repo *ProductCommandRepository) Create(ctx context.Context, product *domai
 	if err := repo.db.Create(dbProduct).Error; err != nil {
 		return nil, err
 	}
-	return &dbProduct.BaseEntity.ID, nil
+	return &dbProduct.BaseEntity.Id, nil
 }
 
 func (repo *ProductCommandRepository) Update(ctx context.Context, product *domain.Product) (*uuid.UUID, error) {
@@ -30,7 +30,7 @@ func (repo *ProductCommandRepository) Update(ctx context.Context, product *domai
 	result := repo.db.
 		WithContext(ctx).
 		Model(&ProductDbEntity{}).
-		Where("id = ?", dbProduct.BaseEntity.ID).
+		Where("id = ?", dbProduct.BaseEntity.Id).
 		Updates(dbProduct)
 	if err := result.Error; err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (repo *ProductCommandRepository) Update(ctx context.Context, product *domai
 	if result.RowsAffected == 0 {
 		return nil, gorm.ErrRecordNotFound
 	}
-	return &dbProduct.BaseEntity.ID, nil
+	return &dbProduct.BaseEntity.Id, nil
 }
 
 func (repo *ProductCommandRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Product, error) {

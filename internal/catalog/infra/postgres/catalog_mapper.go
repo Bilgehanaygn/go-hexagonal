@@ -11,7 +11,7 @@ func toDbEntity(cat *domain.Catalog) *CatalogDbEntity {
 
 	for i, cp := range cat.CatalogProducts {
 		cpDbs[i] = CatalogProductDbEntity{
-			BaseEntity: postgres.BaseEntity{ID: cp.Id},
+			BaseEntity: postgres.BaseEntity{Id: cp.Id},
 			CatalogId:  cat.Id,
 			ProductId:  cp.ProductId,
 			Price:      cp.Price,
@@ -19,7 +19,7 @@ func toDbEntity(cat *domain.Catalog) *CatalogDbEntity {
 	}
 
 	return &CatalogDbEntity{
-		BaseEntity:       postgres.BaseEntity{ID: cat.Id},
+		BaseEntity:       postgres.BaseEntity{Id: cat.Id},
 		Name:             cat.Name,
 		CatalogProducts:  cpDbs,
 	}
@@ -30,7 +30,7 @@ func toDomainEntity(dbCat *CatalogDbEntity) *domain.Catalog {
 
 	for i, cp := range dbCat.CatalogProducts {
 		cps[i] = &domain.CatalogProduct{
-			Id:        cp.BaseEntity.ID,
+			Id:        cp.BaseEntity.Id,
 			CatalogId: cp.CatalogId,
 			ProductId: cp.ProductId,
 			Price:     cp.Price,
@@ -38,7 +38,7 @@ func toDomainEntity(dbCat *CatalogDbEntity) *domain.Catalog {
 	}
 
 	return &domain.Catalog{
-		Id:              dbCat.BaseEntity.ID,
+		Id:              dbCat.BaseEntity.Id,
 		Name:            dbCat.Name,
 		CatalogProducts: cps,
 	}
@@ -49,15 +49,15 @@ func toCatalogDetailDto(dbCat *CatalogDbEntity) *response.CatalogDetailDto {
 
 	for i, cp := range dbCat.CatalogProducts {
 		cpDtos[i] = response.CatalogProductDto{
-			Id:        cp.BaseEntity.ID,
-			CatalogId: dbCat.BaseEntity.ID,
+			Id:        cp.BaseEntity.Id,
+			CatalogId: dbCat.BaseEntity.Id,
 			ProductId: cp.ProductId,
 			Price:     cp.Price,
 		}
 	}
 
 	return &response.CatalogDetailDto{
-		Id:              dbCat.BaseEntity.ID,
+		Id:              dbCat.BaseEntity.Id,
 		Name:            dbCat.Name,
 		CatalogProducts: cpDtos,
 	}

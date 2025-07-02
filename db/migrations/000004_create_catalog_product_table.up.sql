@@ -1,6 +1,5 @@
 CREATE TABLE catalog_product (
   id          UUID PRIMARY KEY,
-  name        VARCHAR(255)      NOT NULL,
   catalog_id   UUID  NOT NULL,
   product_id   UUID  NOT NULL,
   price  DECIMAL(10,2)  NOT NULL,

@@ -27,6 +27,7 @@ import (
 	catalogpg "github.com/bilgehanaygn/urun/internal/catalog/infra/postgres"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/golang-migrate/migrate/v4"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -55,6 +56,16 @@ func main() {
 	}
 
 	r := chi.NewRouter()
+
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:2999", "http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+
 	server := &http.Server{Addr: ":" + port, Handler: r}
 
 	if err != nil {
@@ -86,7 +97,7 @@ func main() {
 	})
 	r.Route("/product", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[productreq.ProductCreateRequest, productres.ProductCreateResponse](productCreateHandler))
-		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, productres.ProductDetailDto](productGetHandler))
+		r.Get("/{id}", api.MakeHTTPHandler[productreq.ProductGetRequest, productres.ProductDetailDto](productGetHandler))
 	})
 	r.Route("/catalog", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[catalogreq.CatalogCreateRequest, catalogres.CatalogCreateResponse](catalogCreateHandler))

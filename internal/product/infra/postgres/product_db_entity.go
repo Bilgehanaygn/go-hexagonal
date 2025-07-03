@@ -1,6 +1,6 @@
 package postgres
 
-import "github.com/bilgehanaygn/urun/internal/common/postgres"
+import "github.com/bilgehanaygn/urun/internal/pkg/postgres"
 
 
 

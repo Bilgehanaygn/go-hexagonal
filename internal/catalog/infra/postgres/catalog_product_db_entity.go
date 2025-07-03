@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"github.com/bilgehanaygn/urun/internal/common/postgres"
+	"github.com/bilgehanaygn/urun/internal/pkg/postgres"
 	"github.com/google/uuid"
 )
 

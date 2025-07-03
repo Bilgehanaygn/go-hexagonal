@@ -3,7 +3,7 @@ package postgres
 import (
 	"github.com/bilgehanaygn/urun/internal/catalog/domain"
 	"github.com/bilgehanaygn/urun/internal/catalog/infra/http/response"
-	"github.com/bilgehanaygn/urun/internal/common/postgres"
+	"github.com/bilgehanaygn/urun/internal/pkg/postgres"
 )
 
 func toDbEntity(cat *domain.Catalog) *CatalogDbEntity {

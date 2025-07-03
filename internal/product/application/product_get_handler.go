@@ -4,16 +4,16 @@ import (
 	"context"
 
 	"github.com/bilgehanaygn/urun/internal/product/application/ports"
+	"github.com/bilgehanaygn/urun/internal/product/infra/http/request"
 	"github.com/bilgehanaygn/urun/internal/product/infra/http/response"
-	"github.com/google/uuid"
 )
 
 type ProductGetHandler struct {
 	ProductQPort ports.ProductQueryPort
 }
 
-func (productQHandler *ProductGetHandler) Handle(ctx context.Context, id *uuid.UUID) (*response.ProductDetailDto, error) {
-	product, err := productQHandler.ProductQPort.GetDtoById(ctx, *id)
+func (productQHandler *ProductGetHandler) Handle(ctx context.Context, req *request.ProductGetRequest) (*response.ProductDetailDto, error) {
+	product, err := productQHandler.ProductQPort.GetDtoById(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}

@@ -21,6 +21,7 @@ func NewCatalogQueryPort(db *gorm.DB) ports.CatalogQueryPort {
 func (repo *CatalogQueryRepository) GetDtoById(ctx context.Context, id uuid.UUID) (*response.CatalogDetailDto, error) {
 	var dbCatalog CatalogDbEntity
 	if err := repo.db.WithContext(ctx).
+		Preload("CatalogProducts").
 		First(&dbCatalog, "id = ?", id).
 		Error; err != nil {
 		return nil, err

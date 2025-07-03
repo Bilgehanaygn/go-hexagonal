@@ -90,7 +90,7 @@ func main() {
 	})
 	r.Route("/catalog", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[catalogreq.CatalogCreateRequest, catalogres.CatalogCreateResponse](catalogCreateHandler))
-		r.Get("/{id}", api.MakeHTTPHandler[uuid.UUID, catalogres.CatalogDetailDto](catalogGetHandler))
+		r.Get("/{id}", api.MakeHTTPHandler[catalogreq.CatalogGetRequest, catalogres.CatalogDetailDto](catalogGetHandler))
 	})
 
 	go func(){

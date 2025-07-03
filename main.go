@@ -14,6 +14,7 @@ import (
 	"github.com/bilgehanaygn/urun/internal/category/infra/http/request"
 	"github.com/bilgehanaygn/urun/internal/category/infra/http/response"
 	internalpg "github.com/bilgehanaygn/urun/internal/category/infra/postgres"
+	"github.com/bilgehanaygn/urun/internal/pkg/app"
 	"github.com/google/uuid"
 
 	productapplication "github.com/bilgehanaygn/urun/internal/product/application"
@@ -57,19 +58,14 @@ func main() {
 
 	r := chi.NewRouter()
 
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:2999", "http://localhost:3000"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
-		MaxAge:           300,
-	}))
-
-	server := &http.Server{Addr: ":" + port, Handler: r}
-
+	config, err := app.NewConfig()
 	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
+		log.Fatalf("Failed to initialize app config %v", err)
+	}
+
+	server, err := initHttpServer(config, r)
+	if err != nil {
+		log.Fatalf("Failed to initialize http server: %v", err)
 	}
 
 	gormDB := initializeGorm(dbUrl)
@@ -160,4 +156,19 @@ func initializeGorm(dbUrl string) *gorm.DB {
 	db.SetConnMaxLifetime(time.Hour)
 
 	return gormDB
+}
+
+func initHttpServer(config *app.Config, r *chi.Mux) (*http.Server, error) {
+	server := &http.Server{Addr: ":" + config.App.Port, Handler: r}
+
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   config.App.CORS.AllowedOrigins,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+
+	return server, nil
 }

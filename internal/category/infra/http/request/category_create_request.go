@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bilgehanaygn/urun/internal/category/domain"
+	pkgDomain "github.com/bilgehanaygn/urun/internal/pkg/domain"
 	"github.com/google/uuid"
 )
 
@@ -29,6 +30,6 @@ func (request *CategoryCreateRequest) ToDomainEntity() (*domain.Category, error)
 		Name:             request.Name,
 		Kind:             domain.CategoryKind(request.Kind),
 		ParentCategoryId: request.ParentCategoryId,
-		Status:           domain.ACTIVE,
+		Status:           pkgDomain.ACTIVE,
 	}, nil
 }

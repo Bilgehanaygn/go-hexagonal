@@ -9,13 +9,13 @@ import (
 func toDbEntity(cat *domain.Catalog) *CatalogDbEntity {
 	cpDbs := make([]CatalogProductDbEntity, len(cat.CatalogProducts))
 
-	for i, cp := range cat.CatalogProducts {
-		cpDbs[i] = CatalogProductDbEntity{
-			BaseEntity: postgres.BaseEntity{Id: cp.Id},
-			CatalogId:  cat.Id,
-			ProductId:  cp.ProductId,
-			Price:      cp.Price,
-		}
+	for i := range cpDbs {
+		cpDb := &cpDbs[i]
+		cp := cat.CatalogProducts[i]
+		cpDb.BaseEntity.Id = cp.Id
+		cpDb.CatalogId = cat.Id
+		cpDb.ProductId = cp.ProductId
+		cpDb.Price = cp.Price
 	}
 
 	return &CatalogDbEntity{
@@ -26,10 +26,10 @@ func toDbEntity(cat *domain.Catalog) *CatalogDbEntity {
 }
 
 func toDomainEntity(dbCat *CatalogDbEntity) *domain.Catalog {
-	cps := make([]*domain.CatalogProduct, len(dbCat.CatalogProducts))
+	cps := make([]domain.CatalogProduct, len(dbCat.CatalogProducts))
 
 	for i, cp := range dbCat.CatalogProducts {
-		cps[i] = &domain.CatalogProduct{
+		cps[i] = domain.CatalogProduct{
 			Id:        cp.BaseEntity.Id,
 			CatalogId: cp.CatalogId,
 			ProductId: cp.ProductId,

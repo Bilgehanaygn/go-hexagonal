@@ -17,21 +17,21 @@ type CatalogProductCreateRequest struct {
 
 func (request *CatalogCreateRequest) ToDomainEntity() (*domain.Catalog, error) {
 	catalogId := uuid.New()
-	catalogProducts := make([]*domain.CatalogProduct, len(request.CatalogProducts))
+	cps := make([]domain.CatalogProduct, len(request.CatalogProducts))
 
-	for i, catalogProduct := range request.CatalogProducts {
-		catalogProducts[i] = &domain.CatalogProduct{
+	for i, cp := range request.CatalogProducts {
+		cps[i] = domain.CatalogProduct{
 			Id: uuid.New(),
 			CatalogId: catalogId,
-			ProductId: catalogProduct.ProductId,
-			Price: catalogProduct.Price,
+			ProductId: cp.ProductId,
+			Price: cp.Price,
 		}
 	}
 
 	return &domain.Catalog{
 		Id:       catalogId,
 		Name:     request.Name,
-		CatalogProducts: catalogProducts,
+		CatalogProducts: cps,
 	}, nil
 }
 

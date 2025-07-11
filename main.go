@@ -82,7 +82,7 @@ func main() {
 
 	gormDB := initializeGorm(dbUrl)
 
-	if _, err := startTracing(); err != nil {
+	if _, err := startTracing(config); err != nil {
 		log.Fatalf("tracing init failed: %v", err)
 	}
 
@@ -198,7 +198,7 @@ func initHttpServer(config *app.Config, r *chi.Mux) (*http.Server, error) {
 	return server, nil
 }
 
-func startTracing() (*trace.TracerProvider, error) {
+func startTracing( config *app.Config) (*trace.TracerProvider, error) {
 	headers := map[string]string{
 		"content-type": "application/json",
 	}
@@ -206,7 +206,7 @@ func startTracing() (*trace.TracerProvider, error) {
 	exporter, err := otlptrace.New(
 		context.Background(),
 		otlptracehttp.NewClient(
-			otlptracehttp.WithEndpoint("localhost:4318"),
+			otlptracehttp.WithEndpoint(config.Observability.OtelExporterOtlpEndpoint),
 			otlptracehttp.WithHeaders(headers),
 			otlptracehttp.WithInsecure(),
 		),

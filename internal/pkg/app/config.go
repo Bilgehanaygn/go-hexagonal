@@ -20,6 +20,11 @@ type Config struct {
 
 		Port string `env:"PORT"`
 	}
+
+	Observability struct {
+		OtelExporterOtlpEndpoint string `env:"OTEL_EXPORTER_OTLP_ENDPOINT"`
+		OtelMetricExportInterval int16 `env:"OTEL_METRIC_EXPORT_INTERVAL"`
+	}
 }
 
 // NewConfig creates a new Config instance with values from environment variables

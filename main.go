@@ -47,6 +47,7 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+	gormotel "gorm.io/plugin/opentelemetry/tracing"
 )
 
 func main() {
@@ -164,6 +165,10 @@ func initializeGorm(dbUrl string) *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	if err := gormDB.Use(gormotel.NewPlugin()); err != nil {
+        log.Fatalf("failed to use GORM opentelemetry plugin: %v", err)
+    }
 
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(5)

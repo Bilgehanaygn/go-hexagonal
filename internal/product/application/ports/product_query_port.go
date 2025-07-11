@@ -9,4 +9,4 @@ import (
 
 type ProductQueryPort interface {
 	GetDtoById(ctx context.Context, id uuid.UUID) (*response.ProductDetailDto, error)
-} 
+}

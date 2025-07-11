@@ -55,6 +55,6 @@ func (repo *CategoryCommandRepository) FindById(ctx context.Context, id uuid.UUI
 	}
 
 	category := toDomainEntity(&dbCategory)
-	
+
 	return category, nil
 }

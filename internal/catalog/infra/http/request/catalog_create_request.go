@@ -6,13 +6,13 @@ import (
 )
 
 type CatalogCreateRequest struct {
-	Name     string      `json:"name"`
+	Name            string                        `json:"name"`
 	CatalogProducts []CatalogProductCreateRequest `json:"catalogProducts"`
 }
 
 type CatalogProductCreateRequest struct {
 	ProductId uuid.UUID `json:"productId"`
-	Price float64 `json:"price"`
+	Price     float64   `json:"price"`
 }
 
 func (request *CatalogCreateRequest) ToDomainEntity() (*domain.Catalog, error) {
@@ -21,17 +21,16 @@ func (request *CatalogCreateRequest) ToDomainEntity() (*domain.Catalog, error) {
 
 	for i, cp := range request.CatalogProducts {
 		cps[i] = domain.CatalogProduct{
-			Id: uuid.New(),
+			Id:        uuid.New(),
 			CatalogId: catalogId,
 			ProductId: cp.ProductId,
-			Price: cp.Price,
+			Price:     cp.Price,
 		}
 	}
 
 	return &domain.Catalog{
-		Id:       catalogId,
-		Name:     request.Name,
+		Id:              catalogId,
+		Name:            request.Name,
 		CatalogProducts: cps,
 	}, nil
 }
-

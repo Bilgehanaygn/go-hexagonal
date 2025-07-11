@@ -9,4 +9,4 @@ import (
 
 type CatalogQueryPort interface {
 	GetDtoById(ctx context.Context, id uuid.UUID) (*response.CatalogDetailDto, error)
-} 
+}

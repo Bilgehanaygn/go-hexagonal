@@ -13,8 +13,8 @@ type CatalogUpdateRequest struct {
 
 func (request *CatalogUpdateRequest) ToDomainEntity() (*domain.Catalog, error) {
 	return &domain.Catalog{
-		Id:       request.Id,
-		Name:     request.Name,
+		Id:   request.Id,
+		Name: request.Name,
 		// Products: will be resolved from UUIDs elsewhere
 	}, nil
-} 
+}

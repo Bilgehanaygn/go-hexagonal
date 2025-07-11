@@ -5,5 +5,5 @@ import (
 )
 
 type CategoryCreateResponse struct {
-	Id               uuid.UUID               `json:"id"`
+	Id uuid.UUID `json:"id"`
 }

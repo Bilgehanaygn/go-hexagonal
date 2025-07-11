@@ -14,4 +14,4 @@ type CatalogProductDbEntity struct {
 
 func (CatalogProductDbEntity) TableName() string {
 	return "catalog_product"
-} 
+}

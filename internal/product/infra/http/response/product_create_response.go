@@ -6,4 +6,4 @@ import (
 
 type ProductCreateResponse struct {
 	Id uuid.UUID `json:"id"`
-} 
+}

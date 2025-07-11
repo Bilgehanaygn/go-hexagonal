@@ -14,7 +14,6 @@ type Config struct {
 	}
 
 	App struct {
-
 		CORS struct {
 			AllowedOrigins []string `env:"CORS_ALLOWED_ORIGINS" envDefault:"http://localhost:2999,http://localhost:3000"`
 		}

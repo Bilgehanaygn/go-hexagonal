@@ -50,4 +50,4 @@ func (repo *ProductCommandRepository) FindById(ctx context.Context, id uuid.UUID
 	}
 	product := toDomainEntity(&dbProduct)
 	return product, nil
-} 
+}

@@ -39,4 +39,4 @@ func (repo *ProductQueryRepository) GetDtoList(ctx context.Context) ([]*response
 		dtos[i] = toProductDetailDto(&dbProd)
 	}
 	return dtos, nil
-} 
+}

@@ -16,7 +16,7 @@ func (categoryCreateHandler *CategoryCreateHandler) Handle(ctx context.Context, 
 	category, err := req.ToDomainEntity()
 	if err != nil {
 		return nil, err
-	} 
+	}
 
 	_, err = categoryCreateHandler.CategoryCPort.Create(ctx, category)
 

@@ -20,4 +20,4 @@ func (catalogQHandler *CatalogGetHandler) Handle(ctx context.Context, req *reque
 		return nil, err
 	}
 	return catalog, nil
-} 
+}

@@ -6,10 +6,10 @@ import (
 
 type CatalogDbEntity struct {
 	postgres.BaseEntity
-	Name     string
+	Name            string
 	CatalogProducts []CatalogProductDbEntity `gorm:"foreignKey:CatalogId;references:Id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 }
 
 func (CatalogDbEntity) TableName() string {
 	return "catalog"
-} 
+}

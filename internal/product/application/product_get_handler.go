@@ -18,4 +18,4 @@ func (productQHandler *ProductGetHandler) Handle(ctx context.Context, req *reque
 		return nil, err
 	}
 	return product, nil
-} 
+}

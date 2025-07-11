@@ -12,4 +12,4 @@ type CatalogCommandPort interface {
 	Create(ctx context.Context, s *domain.Catalog) (*uuid.UUID, error)
 	Update(ctx context.Context, s *domain.Catalog) (*uuid.UUID, error)
 	FindById(ctx context.Context, id uuid.UUID) (*domain.Catalog, error)
-} 
+}

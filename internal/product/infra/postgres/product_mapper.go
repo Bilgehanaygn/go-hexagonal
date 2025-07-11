@@ -19,8 +19,8 @@ func toDbEntity(product *domain.Product) *ProductDbEntity {
 
 func toDomainEntity(dbProduct *ProductDbEntity) *domain.Product {
 	product := domain.Product{
-		Name:      dbProduct.Name,
-		Price:     dbProduct.Price,
+		Name:  dbProduct.Name,
+		Price: dbProduct.Price,
 	}
 	return &product
 }
@@ -32,4 +32,4 @@ func toProductDetailDto(dbProduct *ProductDbEntity) *response.ProductDetailDto {
 		Price: dbProduct.Price,
 	}
 	return &dto
-} 
+}

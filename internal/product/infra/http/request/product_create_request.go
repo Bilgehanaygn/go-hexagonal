@@ -12,8 +12,8 @@ type ProductCreateRequest struct {
 
 func (request *ProductCreateRequest) ToDomainEntity() (*domain.Product, error) {
 	return &domain.Product{
-		Id: uuid.New(),
+		Id:    uuid.New(),
 		Name:  request.Name,
 		Price: request.Price,
 	}, nil
-} 
+}

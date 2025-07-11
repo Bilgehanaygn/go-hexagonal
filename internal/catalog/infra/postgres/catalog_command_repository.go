@@ -27,7 +27,6 @@ func (r *CatalogCommandRepository) Create(ctx context.Context, cat *domain.Catal
 	return &dbCat.BaseEntity.Id, nil
 }
 
-
 func (repo *CatalogCommandRepository) Update(ctx context.Context, catalog *domain.Catalog) (*uuid.UUID, error) {
 	dbCatalog := toDbEntity(catalog)
 	result := repo.db.
@@ -53,4 +52,4 @@ func (repo *CatalogCommandRepository) FindById(ctx context.Context, id uuid.UUID
 	}
 	catalog := toDomainEntity(&dbCatalog)
 	return catalog, nil
-} 
+}

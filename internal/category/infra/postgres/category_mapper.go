@@ -33,12 +33,12 @@ func toDomainEntity(dbCategory *CategoryDbEntity) *domain.Category {
 }
 
 func toCategoryDetailDto(dbCategory *CategoryDbEntity) *response.CategoryDetailDto {
-	dto := response.CategoryDetailDto {
-		Id: dbCategory.BaseEntity.Id,
-		Name: dbCategory.Name,
-		Kind: dbCategory.Kind,
+	dto := response.CategoryDetailDto{
+		Id:               dbCategory.BaseEntity.Id,
+		Name:             dbCategory.Name,
+		Kind:             dbCategory.Kind,
 		ParentCategoryId: dbCategory.ParentCategoryId,
-		Status: dbCategory.Status,
+		Status:           dbCategory.Status,
 	}
 
 	return &dto

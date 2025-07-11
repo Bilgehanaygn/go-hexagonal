@@ -2,8 +2,6 @@ package postgres
 
 import "github.com/bilgehanaygn/urun/internal/pkg/postgres"
 
-
-
 type ProductDbEntity struct {
 	postgres.BaseEntity
 	Name  string
@@ -12,4 +10,4 @@ type ProductDbEntity struct {
 
 func (ProductDbEntity) TableName() string {
 	return "product"
-} 
+}

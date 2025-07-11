@@ -24,4 +24,4 @@ func (catalogUpdateHandler *CatalogUpdateHandler) Handle(ctx context.Context, re
 	}
 
 	return &response.CatalogUpdateResponse{Id: catalog.Id}, nil
-} 
+}

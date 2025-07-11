@@ -24,4 +24,4 @@ func (catalogCreateHandler *CatalogCreateHandler) Handle(ctx context.Context, re
 	}
 
 	return &response.CatalogCreateResponse{Id: catalog.Id}, nil
-} 
+}

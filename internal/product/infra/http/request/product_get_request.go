@@ -5,5 +5,5 @@ import (
 )
 
 type ProductGetRequest struct {
-	Id  uuid.UUID  `param:"id"`
+	Id uuid.UUID `param:"id"`
 }

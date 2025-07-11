@@ -16,7 +16,7 @@ func (categoryUpdateHandler *CategoryUpdateHandler) Handle(ctx context.Context, 
 	category, err := req.ToDomainEntity()
 	if err != nil {
 		return nil, err
-	} 
+	}
 
 	_, err = categoryUpdateHandler.CategoryCPort.Update(ctx, category)
 

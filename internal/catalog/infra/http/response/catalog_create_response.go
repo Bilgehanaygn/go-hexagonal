@@ -6,4 +6,4 @@ import (
 
 type CatalogCreateResponse struct {
 	Id uuid.UUID `json:"id"`
-} 
+}

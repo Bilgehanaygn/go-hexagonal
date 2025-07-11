@@ -8,9 +8,9 @@ import (
 )
 
 type CategoryDetailDto struct {
-	Id               uuid.UUID               `json:"id"`
-	Name             string                  `json:"name"`
-	Kind             domain.CategoryKind     `json:"kind"`
-	ParentCategoryId *uuid.UUID              `json:"parentCategoryId"`
+	Id               uuid.UUID                  `json:"id"`
+	Name             string                     `json:"name"`
+	Kind             domain.CategoryKind        `json:"kind"`
+	ParentCategoryId *uuid.UUID                 `json:"parentCategoryId"`
 	Status           pkgDomain.ActivenessStatus `json:"status"`
 }

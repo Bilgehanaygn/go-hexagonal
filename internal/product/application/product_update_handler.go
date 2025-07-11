@@ -24,4 +24,4 @@ func (productUpdateHandler *ProductUpdateHandler) Handle(ctx context.Context, re
 	}
 
 	return &response.ProductUpdateResponse{Id: product.Id}, nil
-} 
+}

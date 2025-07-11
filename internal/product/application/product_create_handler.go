@@ -24,4 +24,4 @@ func (productCreateHandler *ProductCreateHandler) Handle(ctx context.Context, re
 	}
 
 	return &response.ProductCreateResponse{Id: *id}, nil
-} 
+}

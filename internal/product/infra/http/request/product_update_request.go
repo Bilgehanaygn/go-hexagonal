@@ -17,4 +17,4 @@ func (request *ProductUpdateRequest) ToDomainEntity() (*domain.Product, error) {
 		Name:  request.Name,
 		Price: request.Price,
 	}, nil
-} 
+}

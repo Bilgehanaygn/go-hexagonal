@@ -5,7 +5,7 @@ import (
 )
 
 type CatalogProduct struct {
-	Id       uuid.UUID
+	Id        uuid.UUID
 	CatalogId uuid.UUID
 	ProductId uuid.UUID
 	Price     float64

@@ -19,9 +19,9 @@ func toDbEntity(cat *domain.Catalog) *CatalogDbEntity {
 	}
 
 	return &CatalogDbEntity{
-		BaseEntity:       postgres.BaseEntity{Id: cat.Id},
-		Name:             cat.Name,
-		CatalogProducts:  cpDbs,
+		BaseEntity:      postgres.BaseEntity{Id: cat.Id},
+		Name:            cat.Name,
+		CatalogProducts: cpDbs,
 	}
 }
 

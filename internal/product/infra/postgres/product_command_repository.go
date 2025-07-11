@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 
+	"github.com/bilgehanaygn/urun/internal/catalog/infra/postgres"
 	"github.com/bilgehanaygn/urun/internal/product/application/ports"
 	"github.com/bilgehanaygn/urun/internal/product/domain"
 	"github.com/google/uuid"
@@ -50,4 +51,20 @@ func (repo *ProductCommandRepository) FindById(ctx context.Context, id uuid.UUID
 	}
 	product := toDomainEntity(&dbProduct)
 	return product, nil
+}
+
+func (repo *ProductCommandRepository) IsAssociatedWithAnyCatalog(ctx context.Context, id uuid.UUID) (bool, error){
+	var count int64
+
+	result := repo.db.
+		WithContext(ctx).
+		Model(&postgres.CatalogProductDbEntity{}).
+		Where("product_id = ?", id).
+		Count(&count)
+
+	if result.Error != nil {
+		return false, result.Error
+	}
+		
+    return count > 0, nil
 }

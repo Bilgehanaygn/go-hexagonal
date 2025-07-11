@@ -1,6 +1,7 @@
 package request
 
 import (
+	pkgdomain "github.com/bilgehanaygn/urun/internal/pkg/domain"
 	"github.com/bilgehanaygn/urun/internal/product/domain"
 	"github.com/google/uuid"
 )
@@ -15,5 +16,6 @@ func (request *ProductCreateRequest) ToDomainEntity() (*domain.Product, error) {
 		Id:    uuid.New(),
 		Name:  request.Name,
 		Price: request.Price,
+		Status: pkgdomain.ACTIVE,
 	}, nil
 }

@@ -95,6 +95,7 @@ func main() {
 	productCPort := productpg.NewProductCommandPort(gormDB)
 	productQPort := productpg.NewProductQueryPort(gormDB)
 	productCreateHandler := &productapplication.ProductCreateHandler{ProductCPort: productCPort}
+	productUpdateStatusHandler := &productapplication.ProductUpdateStatusHandler{ProductCPort: productCPort}
 	productGetHandler := &productapplication.ProductGetHandler{ProductQPort: productQPort}
 
 	catalogCPort := catalogpg.NewCatalogCommandPort(gormDB)
@@ -110,6 +111,7 @@ func main() {
 	r.Route("/product", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[productreq.ProductCreateRequest, productres.ProductCreateResponse](productCreateHandler))
 		r.Get("/{id}", api.MakeHTTPHandler[productreq.ProductGetRequest, productres.ProductDetailDto](productGetHandler))
+		r.Patch("/{productId}/status", api.MakeHTTPHandler[productreq.ProductUpdateStatusRequest, productres.ProductUpdateStatusResponse](productUpdateStatusHandler))
 	})
 	r.Route("/catalog", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[catalogreq.CatalogCreateRequest, catalogres.CatalogCreateResponse](catalogCreateHandler))

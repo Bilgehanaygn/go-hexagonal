@@ -11,4 +11,5 @@ type ProductCommandPort interface {
 	Create(ctx context.Context, s *domain.Product) (*uuid.UUID, error)
 	Update(ctx context.Context, s *domain.Product) (*uuid.UUID, error)
 	FindById(ctx context.Context, id uuid.UUID) (*domain.Product, error)
+	IsAssociatedWithAnyCatalog(ctx context.Context, id uuid.UUID) (bool, error)
 }

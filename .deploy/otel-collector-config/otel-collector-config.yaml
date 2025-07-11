@@ -13,7 +13,7 @@ processors:
 
 exporters:
   jaeger:
-    endpoint: "localhost:14250"
+    endpoint: "jaeger:14250"
     tls:
       insecure: true
 

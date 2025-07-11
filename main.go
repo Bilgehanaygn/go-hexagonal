@@ -39,6 +39,8 @@ import (
 	"gorm.io/gorm"
 
 	//OTEL TRACING
+
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
@@ -65,21 +67,23 @@ func main() {
 		log.Fatalf("migration failed: %v", err)
 	}
 
-	r := chi.NewRouter()
-
 	config, err := app.NewConfig()
 	if err != nil {
 		log.Fatalf("Failed to initialize app config %v", err)
 	}
 
+	r := chi.NewRouter()
 	server, err := initHttpServer(config, r)
+
 	if err != nil {
 		log.Fatalf("Failed to initialize http server: %v", err)
 	}
 
 	gormDB := initializeGorm(dbUrl)
 
-	startTracing()
+	if _, err := startTracing(); err != nil {
+		log.Fatalf("tracing init failed: %v", err)
+	}
 
 	categoryCPort := internalpg.NewCategoryCommandPort(gormDB)
 	categoryQPort := internalpg.NewCategoryQueryPort(gormDB)
@@ -170,7 +174,6 @@ func initializeGorm(dbUrl string) *gorm.DB {
 }
 
 func initHttpServer(config *app.Config, r *chi.Mux) (*http.Server, error) {
-	server := &http.Server{Addr: ":" + config.App.Port, Handler: r}
 
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   config.App.CORS.AllowedOrigins,
@@ -181,43 +184,47 @@ func initHttpServer(config *app.Config, r *chi.Mux) (*http.Server, error) {
 		MaxAge:           300,
 	}))
 
+	handler := otelhttp.NewHandler(r, "urun-service")
+
+	server := &http.Server{Addr: ":" + config.App.Port, Handler: handler}
+
 	return server, nil
 }
 
-
 func startTracing() (*trace.TracerProvider, error) {
- headers := map[string]string{
-  "content-type": "application/json",
- }
+	headers := map[string]string{
+		"content-type": "application/json",
+	}
 
- exporter, err := otlptrace.New(
-  context.Background(),
-  otlptracehttp.NewClient(
-   otlptracehttp.WithEndpoint("localhost:4318"),
-   otlptracehttp.WithHeaders(headers),
-   otlptracehttp.WithInsecure(),
-  ),
- )
- if err != nil {
-  return nil, fmt.Errorf("creating new exporter: %w", err)
- }
+	exporter, err := otlptrace.New(
+		context.Background(),
+		otlptracehttp.NewClient(
+			otlptracehttp.WithEndpoint("localhost:4318"),
+			otlptracehttp.WithHeaders(headers),
+			otlptracehttp.WithInsecure(),
+		),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("creating new exporter: %w", err)
+	}
 
- tracerprovider := trace.NewTracerProvider(
-  trace.WithBatcher(
-   exporter,
-   trace.WithMaxExportBatchSize(trace.DefaultMaxExportBatchSize),
-   trace.WithBatchTimeout(trace.DefaultScheduleDelay*time.Millisecond),
-   trace.WithMaxExportBatchSize(trace.DefaultMaxExportBatchSize),
-  ),
-  trace.WithResource(
-   resource.NewWithAttributes(
-    semconv.SchemaURL,
-    semconv.ServiceNameKey.String("product-app"),
-   ),
-  ),
- )
+	tracerprovider := trace.NewTracerProvider(
+		trace.WithBatcher(
+			exporter,
+			trace.WithMaxExportBatchSize(trace.DefaultMaxExportBatchSize),
+			trace.WithBatchTimeout(trace.DefaultScheduleDelay*time.Millisecond),
+			trace.WithMaxExportBatchSize(trace.DefaultMaxExportBatchSize),
+		),
+		trace.WithResource(
+			resource.NewWithAttributes(
+				semconv.SchemaURL,
+				semconv.ServiceNameKey.String("urun-service"),
+			),
+		),
+		trace.WithSampler(trace.AlwaysSample()),
+	)
 
- otel.SetTracerProvider(tracerprovider)
+	otel.SetTracerProvider(tracerprovider)
 
- return tracerprovider, nil
+	return tracerprovider, nil
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -36,6 +37,14 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	//OTEL TRACING
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/sdk/resource"
+	"go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
 func main() {
@@ -69,6 +78,9 @@ func main() {
 	}
 
 	gormDB := initializeGorm(dbUrl)
+
+	startTracing()
+
 	categoryCPort := internalpg.NewCategoryCommandPort(gormDB)
 	categoryQPort := internalpg.NewCategoryQueryPort(gormDB)
 	categoryCreateHandler := &application.CategoryCreateHandler{CategoryCPort: categoryCPort}
@@ -85,7 +97,6 @@ func main() {
 	catalogCreateHandler := &catalogapplication.CatalogCreateHandler{CatalogCPort: catalogCPort}
 	catalogGetHandler := &catalogapplication.CatalogGetHandler{CatalogQPort: catalogQPort}
 
-
 	r.Route("/category", func(r chi.Router) {
 		r.Post("/", api.MakeHTTPHandler[request.CategoryCreateRequest, response.CategoryCreateResponse](categoryCreateHandler))
 		r.Put("/", api.MakeHTTPHandler[request.CategoryUpdateRequest, response.CategoryUpdateResponse](categoryUpdateHandler))
@@ -100,7 +111,7 @@ func main() {
 		r.Get("/{id}", api.MakeHTTPHandler[catalogreq.CatalogGetRequest, catalogres.CatalogDetailDto](catalogGetHandler))
 	})
 
-	go func(){
+	go func() {
 		log.Printf("Listening on %v", port)
 		err = server.ListenAndServe()
 	}()
@@ -112,40 +123,40 @@ func gracefulShutdown(srv *http.Server, gormDB *gorm.DB) {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	<-ctx.Done() 
+	<-ctx.Done()
 	log.Println("interruption signal received, shutting down server…")
 
 	timeoutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    defer cancel()
+	defer cancel()
 
-    if err := srv.Shutdown(timeoutCtx); err != nil {
-        log.Printf("graceful shutdown did not complete in 5s: %v", err)
-        if err2 := srv.Close(); err2 != nil {
-            log.Printf("error forcing server close: %v", err2)
-        }
-    } else {
-        log.Println("server shut down gracefully")
-    }
+	if err := srv.Shutdown(timeoutCtx); err != nil {
+		log.Printf("graceful shutdown did not complete in 5s: %v", err)
+		if err2 := srv.Close(); err2 != nil {
+			log.Printf("error forcing server close: %v", err2)
+		}
+	} else {
+		log.Println("server shut down gracefully")
+	}
 
 	sqlDB, err := gormDB.DB()
-    if err != nil {
-        log.Printf("could not retrieve raw DB from GORM: %v", err)
-        return
-    }
-    if err := sqlDB.Close(); err != nil {
-        log.Printf("error closing DB pool: %v", err)
-    } else {
-        log.Println("database connection pool closed")
-    }
+	if err != nil {
+		log.Printf("could not retrieve raw DB from GORM: %v", err)
+		return
+	}
+	if err := sqlDB.Close(); err != nil {
+		log.Printf("error closing DB pool: %v", err)
+	} else {
+		log.Println("database connection pool closed")
+	}
 }
 
 func initializeGorm(dbUrl string) *gorm.DB {
 	gormDB, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
 	if err != nil {
-	log.Fatal(err)
+		log.Fatal(err)
 	}
 
-	db, err := gormDB.DB() 
+	db, err := gormDB.DB()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -171,4 +182,42 @@ func initHttpServer(config *app.Config, r *chi.Mux) (*http.Server, error) {
 	}))
 
 	return server, nil
+}
+
+
+func startTracing() (*trace.TracerProvider, error) {
+ headers := map[string]string{
+  "content-type": "application/json",
+ }
+
+ exporter, err := otlptrace.New(
+  context.Background(),
+  otlptracehttp.NewClient(
+   otlptracehttp.WithEndpoint("localhost:4318"),
+   otlptracehttp.WithHeaders(headers),
+   otlptracehttp.WithInsecure(),
+  ),
+ )
+ if err != nil {
+  return nil, fmt.Errorf("creating new exporter: %w", err)
+ }
+
+ tracerprovider := trace.NewTracerProvider(
+  trace.WithBatcher(
+   exporter,
+   trace.WithMaxExportBatchSize(trace.DefaultMaxExportBatchSize),
+   trace.WithBatchTimeout(trace.DefaultScheduleDelay*time.Millisecond),
+   trace.WithMaxExportBatchSize(trace.DefaultMaxExportBatchSize),
+  ),
+  trace.WithResource(
+   resource.NewWithAttributes(
+    semconv.SchemaURL,
+    semconv.ServiceNameKey.String("product-app"),
+   ),
+  ),
+ )
+
+ otel.SetTracerProvider(tracerprovider)
+
+ return tracerprovider, nil
 }

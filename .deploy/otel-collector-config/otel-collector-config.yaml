@@ -1,0 +1,25 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+    # you can tune these if you like, but an empty block is valid
+    # timeout: 200ms
+    # send_batch_size: 1024
+    # send_queue_size: 2048
+
+exporters:
+  jaeger:
+    endpoint: "localhost:14250"
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger]

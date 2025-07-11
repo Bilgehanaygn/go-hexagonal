@@ -3,6 +3,7 @@ version: "3.8"
 networks:
   lgtm-net:
     driver: bridge
+
 services:
   postgres:
     image: postgres:17.5-alpine
@@ -16,63 +17,31 @@ services:
       - TZ=Europe/Istanbul
       - LANG=tr-TR.utf8
       - POSTGRES_INITDB_ARGS=--locale-provider=icu --icu-locale=tr-TR
-    command:
-      - "postgres"
-      - "-c"
-      - "wal_level=logical"
-      - "-c"
-      - "max_replication_slots=10"
-      - "-c"
-      - "max_wal_senders=10"
     restart: always
+    networks:
+      - lgtm-net
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.48
+    ports:
+      - "6831:6831/udp" # jaeger thrift/udp receiver
+      - "14250:14250" # jaeger gRPC receiver (for Collector’s gRPC exporter)
+      - "14268:14268" # jaeger HTTP Thrift endpoint
+      - "16686:16686" # jaeger UI
+    networks:
+      - lgtm-net
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.70.0
-    command: ["--config=/etc/otel-collector/config.yaml"]
+    image: otel/opentelemetry-collector:0.84.0
+    command: ["--config=/etc/custompath/otel-collector-config.yaml"]
     volumes:
-      - ./otel-collector-config.yaml:/etc/otel-collector/config.yaml:ro
+      - type: bind
+        source: /Users/bilgehanaygun/go-projects/urun/.deploy/otel-collector-config/otel-collector-config.yaml
+        target: /etc/custompath/otel-collector-config.yaml
+        read_only: true
     ports:
-      - "4317:4317" # OTLP gRPC
-      - "4318:4318" # OTLP HTTP
-      - "8888:8888" # metrics/debug endpoint
-    networks:
-      - lgtm-net
-  loki:
-    image: grafana/loki:2.9.0
-    command: -config.file=/etc/loki/local-config.yaml
-    volumes:
-      - ./loki-config.yaml:/etc/loki/local-config.yaml:ro
-    ports:
-      - "3100:3100"
-    networks:
-      - lgtm-net
-  mimir:
-    image: grafana/mimir:2.2.0
-    command: -config.file=/etc/mimir/local-config.yaml
-    volumes:
-      - ./mimir-config.yaml:/etc/mimir/local-config.yaml:ro
-    ports:
-      - "9090:9090"
-    networks:
-      - lgtm-net
-  tempo:
-    image: grafana/tempo:1.7.1
-    command: -config.file=/etc/tempo/local-config.yaml
-    volumes:
-      - ./tempo-config.yaml:/etc/tempo/local-config.yaml:ro
-    ports:
-      - "3200:3200"
-    networks:
-      - lgtm-net
-  grafana:
-    image: grafana/grafana:10.5.0
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    ports:
-      - "3000:3000"
-    depends_on:
-      - loki
-      - mimir
-      - tempo
+      - "4317:4317"
+      - "4318:4318"
+      - "8888:8888"
     networks:
       - lgtm-net
